@@ -10,15 +10,15 @@ WINDOW_HIGHT = 360
 BASIC_FONT = pygame.font.Font('freesansbold.ttf', 8)
 DISPLAYSURF = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HIGHT))
 
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-RED = (200, 72, 72)
-LIGHT_ORANGE = (198, 108, 58)
-ORANGE = (180, 122, 48)
-GREEN = (72, 160, 72)
-YELLOW = (162, 162, 46)
-NAVY = (75, 0, 255)
-PURPLE = (143, 0, 255)
+WHITE        = (255, 255, 255)
+BLACK        = (  0,   0,   0)
+RED          = (200,  72,  72)
+LIGHT_ORANGE = (198, 108,  58)
+ORANGE       = (180, 122,  48)
+GREEN        = ( 72, 160,  72)
+YELLOW       = (162, 162,  46)
+NAVY         = ( 75,   0, 255)
+PURPLE       = (143,   0, 255)
 
 
 class Pendulum:

@@ -50,7 +50,7 @@ class Pendulum:
         theta = (theta / pi) * 180
         # print('.....gym_plot.....', theta, '.....gym_plot.....')
         Horizontal_start = [100, int(WINDOW_HIGHT / 2)]
-        Horizontal_end = [380, int(WINDOW_HIGHT / 2)]
+        Horizontal_end   = [380, int(WINDOW_HIGHT / 2)]
         center = [int(WINDOW_WIDTH / 2), int(WINDOW_HIGHT / 2)]
         radius = 140
         Vertical_start = [int(WINDOW_WIDTH / 2), 50]
@@ -62,10 +62,27 @@ class Pendulum:
         x2 = center[1] + radius * sin(angle * pi / 180)
         Pendulum_Point = (x1, x2)
 
-        pygame.draw.line(DISPLAYSURF, WHITE, Horizontal_start, Horizontal_end, 5)
-        pygame.draw.line(DISPLAYSURF, ORANGE, Vertical_start, center, 8)
-        pygame.draw.line(DISPLAYSURF, GREEN, Pendulum_Point, center, 5)
+        radius = abs(int(state[2] * 10))
+        if radius <= 5:
+            radius = 5
+        Rect = ((int(WINDOW_WIDTH / 2) - radius, int(WINDOW_HIGHT / 2) - radius), (radius * 2, radius * 2))
+        # print('..........', Rect, '..........')
+        pygame.draw.line(DISPLAYSURF, WHITE, Horizontal_start, Horizontal_end, 8)
+        pygame.draw.line(DISPLAYSURF, ORANGE, Vertical_start, center, 10)
+        pygame.draw.line(DISPLAYSURF, GREEN, Pendulum_Point, center, 8)
+        if state[2] >= 0:
+            pygame.draw.ellipse(DISPLAYSURF, NAVY, Rect, 4)
+        else:
+            pygame.draw.ellipse(DISPLAYSURF, YELLOW, Rect, 4)
         pygame.display.update()
         image_data = pygame.surfarray.array3d(pygame.display.get_surface())
 
         return image_data
+
+
+
+
+
+
+
+

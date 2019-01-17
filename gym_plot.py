@@ -1,7 +1,5 @@
 from math import pi, sin, cos, asin, acos
-
 import pygame
-
 pygame.init()
 
 WINDOW_WIDTH = 480
@@ -19,7 +17,6 @@ GREEN        = ( 72, 160,  72)
 YELLOW       = (162, 162,  46)
 NAVY         = ( 75,   0, 255)
 PURPLE       = (143,   0, 255)
-
 
 class Pendulum:
     def __init__(self):
@@ -61,8 +58,9 @@ class Pendulum:
         x1 = center[0] + radius * cos(angle * pi / 180)
         x2 = center[1] + radius * sin(angle * pi / 180)
         Pendulum_Point = (x1, x2)
-
+        # 将扭矩作为输入信息，进行可视化，但是好像还是没有什么效果
         radius = abs(int(state[2] * 10))
+        # 这段是防止禅城半径为0的信息，会报错，所以进行处理一下下
         if radius <= 5:
             radius = 5
         Rect = ((int(WINDOW_WIDTH / 2) - radius, int(WINDOW_HIGHT / 2) - radius), (radius * 2, radius * 2))

@@ -65,7 +65,7 @@ b_fc1_actor = bias_variable([first_fc[1]])
 w_fc2_actor = weight_variable(second_fc)
 b_fc2_actor = bias_variable([second_fc[1]])
 
-w_fc3_actor = weight_variable(third_fc_actor)
+w_fc3_actor = weight_variable(third_fc_actor) # num_action
 b_fc3_actor = bias_variable([third_fc_actor[1]])
 
 h_fc1_actor = tf.nn.relu(tf.matmul(x, w_fc1_actor) + b_fc1_actor)
@@ -80,7 +80,7 @@ b_fc1_critic = bias_variable([first_fc[1]])
 w_fc2_critic = weight_variable(second_fc)
 b_fc2_critic = bias_variable([second_fc[1]])
 
-w_fc3_critic = weight_variable(third_fc_critic)
+w_fc3_critic = weight_variable(third_fc_critic)  # 1
 b_fc3_critic = bias_variable([third_fc_critic[1]])
 
 h_fc1_critic = tf.nn.relu(tf.matmul(x, w_fc1_critic) + b_fc1_critic)
@@ -140,8 +140,8 @@ while True:
 
         state_feed = np.reshape(state, (1, 4))
 
-        Policy = output_actor.eval(feed_dict={x: state_feed}).flatten() #按行方向进行降维
-        action_step = np.random.choice(Num_action, 1, p=Policy)[0] #获取动作，重要性采样
+        Policy = output_actor.eval(feed_dict={x: state_feed}).flatten() #按行方向进行降维，降为一维
+        action_step = np.random.choice(Num_action, 1, p=Policy)[0]
         action = np.zeros([1, Num_action])
         action[0, action_step] = 1
 

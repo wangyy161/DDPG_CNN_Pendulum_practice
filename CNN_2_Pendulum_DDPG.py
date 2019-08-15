@@ -36,14 +36,16 @@ Num_episode_plot = 10
 Num_colorChannel = 3
 Num_stackFrame = 4
 
-first_conv_actor = [8, 8, Num_colorChannel, 16]
-second_conv_actor = [4, 4, 16, 32]
-first_fc_actor = [11 * 11 * 32, 400]
-second_fc_actor = [400, 300]
-third_fc_actor = [300, Num_action]
+first_conv_actor = [8, 8, Num_colorChannel, 32]
+second_conv_actor = [4, 4, 32, 32]
+third_conv_actor = [3, 3, 32, 32]
+first_fc_actor = [11 * 11 * 32, 200]
+second_fc_actor = [200, 200]
+third_fc_actor = [200, Num_action]
 
-first_conv_critic = [8, 8, Num_colorChannel, 16]
-second_conv_critic = [4, 4, 16, 32]
+first_conv_critic = [8, 8, Num_colorChannel, 32]
+second_conv_critic = [4, 4, 32, 32]
+third_conv_critic = [3, 3, 32, 32]
 first_fc_critic = [11 * 11 * 32, 400]
 second_fc_critic = [400 + Num_action, 300]
 third_fc_critic = [300, 1]
@@ -78,6 +80,7 @@ class OU_noise(object):
     def reset(self):
         self.state = np.zeros(self.num_actions)
 
+    # self.state = np.zeros(self.num_actions)
     # self.state = np.zeros(self.num_actions)
     def state_update(self):
         x = self.state
@@ -118,6 +121,9 @@ def Actor(x, network_name):
         w_conv2_actor = conv_weight_variable('_w_conv2', second_conv_actor)
         b_conv2_actor = bias_variable('_b_conv2', [second_conv_actor[3]])
 
+        w_conv3_actor = conv_weight_variable('_w_conv3', third_conv_actor)
+        b_conv3_actor = bias_variable('_b_conv3', [third_conv_actor[3]])
+
         w_fc1_actor = weight_variable('_w_fc1', first_fc_actor)
         b_fc1_actor = bias_variable('_b_fc1', [first_fc_actor[1]])
 
@@ -129,8 +135,8 @@ def Actor(x, network_name):
 
     h_conv1_actor = tf.nn.relu(conv2d(x_normalize, w_conv1_actor, 4) + b_conv1_actor)
     h_conv2_actor = tf.nn.relu(conv2d(h_conv1_actor, w_conv2_actor, 2) + b_conv2_actor)
-
-    h_pool3_flat = tf.reshape(h_conv2_actor, [-1, first_fc_actor[0]])
+    h_conv3_actor = tf.nn.relu(conv2d(h_conv2_actor, w_conv3_actor, 2) + b_conv3_actor)
+    h_pool3_flat = tf.reshape(h_conv3_actor, [-1, first_fc_actor[0]])
 
     h_fc1_actor = tf.nn.elu(tf.matmul(h_pool3_flat, w_fc1_actor) + b_fc1_actor)
     h_fc2_actor = tf.nn.elu(tf.matmul(h_fc1_actor, w_fc2_actor) + b_fc2_actor)
@@ -150,7 +156,7 @@ def reshape_input(state):
 def Critic(x, policy, network_name):
     x_normalize = (x - (255.0 / 2)) / (255.0 / 2)
     with tf.variable_scope(network_name):
-        w_conv1_critic = conv_weight_variable('_w_conv1', first_conv_critic)
+        w_conv1_critic  = conv_weight_variable('_w_conv1', first_conv_critic)
         b_conv1_crititc = bias_variable('_b_conv1', [first_conv_critic[3]])
 
         w_conv2_critic = conv_weight_variable('_w_conv2', second_conv_critic)
@@ -167,14 +173,13 @@ def Critic(x, policy, network_name):
 
     h_conv1_critic = tf.nn.relu(conv2d(x_normalize, w_conv1_critic, 4) + b_conv1_crititc)
     h_conv2_critic = tf.nn.relu(conv2d(h_conv1_critic, w_conv2_critic, 2) + b_conv2_critic)
-    # h_pool3_flat = tf.reshape((h_conv2_critic, policy), [-1, first_fc_critic[0]])
-    h_pool3_flat = tf.reshape(h_conv2_critic, [-1, first_fc_critic[0]])
+    h_pool3_flat   = tf.reshape(h_conv2_critic, [-1, first_fc_critic[0]])
     # h_pool3_flat = tf.concat([h_pool3, policy], axis=1)
 
     # Critic Network
-    h_fc1_critic = tf.nn.elu(tf.matmul(h_pool3_flat, w_fc1_critic) + b_fc1_critic)
+    h_fc1_critic = tf.nn.relu(tf.matmul(h_pool3_flat, w_fc1_critic) + b_fc1_critic)
     h_fc1_critic = tf.concat([h_fc1_critic, policy], axis=1)
-    h_fc2_critic = tf.nn.elu(tf.matmul(h_fc1_critic, w_fc2_critic) + b_fc2_critic)
+    h_fc2_critic = tf.nn.relu(tf.matmul(h_fc1_critic, w_fc2_critic) + b_fc2_critic)
 
     output_critic = tf.matmul(h_fc2_critic, w_fc3_critic) + b_fc3_critic
     return output_critic
@@ -209,7 +214,7 @@ critic_loss = tf.losses.mean_squared_error(target_critic, Q_Value)  # 求解targ
 policy_optimizer = tf.train.AdamOptimizer(learning_rate=Learning_rate_actor)
 critic_optimizer = tf.train.AdamOptimizer(learning_rate=Learning_rate_critic)
 
-actor_train = policy_optimizer.minimize(actor_loss, var_list=Actor_vars)
+actor_train  = policy_optimizer.minimize(actor_loss, var_list=Actor_vars)
 critic_train = critic_optimizer.minimize(critic_loss, var_list=Critic_vars)
 
 # Init session

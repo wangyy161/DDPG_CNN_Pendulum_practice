@@ -202,10 +202,12 @@ while True:
     # Choose action
     state = state.reshape(-1, Num_states)
     action = sess.run(Policy, feed_dict={x: state})
+    print('original action:', action)
 
     # Add noise
     if progress != 'Testing':
         action = noise.add_noise(action, step_train)
+    print('the action after add noise:', action)
 
     state_next, reward, terminal, _ = env.step(action)
     state_next = state_next.reshape(-1, Num_states)

@@ -12,9 +12,9 @@ class PendulumEnv(gym.Env):
     }
 
     def __init__(self):
-        self.max_speed=8
-        self.max_torque=2.
-        self.dt=.05
+        self.max_speed = 8
+        self.max_torque = 2.
+        self.dt = .05
         self.viewer = None
 
         high = np.array([1., 1., self.max_speed])
@@ -65,15 +65,15 @@ class PendulumEnv(gym.Env):
 
         if self.viewer is None:
             from gym.envs.classic_control import rendering
-            self.viewer = rendering.Viewer(500,500)
-            self.viewer.set_bounds(-2.2,2.2,-2.2,2.2)
+            self.viewer = rendering.Viewer(500, 500)
+            self.viewer.set_bounds(-2.2, 2.2, -2.2, 2.2)
             rod = rendering.make_capsule(1, .2)
             rod.set_color(.8, .3, .3)
             self.pole_transform = rendering.Transform()
             rod.add_attr(self.pole_transform)
             self.viewer.add_geom(rod)
             axle = rendering.make_circle(.05)
-            axle.set_color(0,0,0)
+            axle.set_color(0, 0, 0)
             self.viewer.add_geom(axle)
             fname = path.join(path.dirname(__file__), "assets/clockwise.png")
             self.img = rendering.Image(fname, 1., 1.)
